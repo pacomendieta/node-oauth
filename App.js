@@ -30,10 +30,12 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 passport.serializeUser( function(user, done) {
+  // ... aqui codigo a ejecutar cuando se autentica el usuario ...
   done(null, user)
 })
 
 passport.deserializeUser( function(user, done) {
+   // ... aqui codigo a ejecutar cada nueva peticion tras autenticacion ...
   done(null, user)
 })
 
@@ -51,8 +53,14 @@ passport.use(new GoogleStrategy({
   },
 
   async function(accessToken, refreshToken, profile, email, cb) {
-
-    return cb(null, email.id)
+    var user = {
+      accessToken: accessToken, 
+      refreshToken: refreshToken, 
+      profile: profile,
+      email: email
+  };
+     return cb(null, user)
+    //return cb(null, email.id)
 
   }
 
@@ -70,7 +78,7 @@ app.get('/', (req, res)=>{
 // PAGINA SUCCESS - LOGIN OK
 app.get('/success', (req, res)=>
 {
-  res.send(req.session);
+  res.send(req.session.passport.user.email._json);
   //res.sendFile(path.join(__dirname + '/public/loginok.html'))
 })
 
